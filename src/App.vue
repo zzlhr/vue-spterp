@@ -23,7 +23,6 @@
               <el-menu-item index="2-4-3">选项3</el-menu-item>
             </el-submenu>
           </el-submenu> -->
-
           <el-menu-item class="right-menu-item" index="3">我的</el-menu-item>
           <el-menu-item class="right-menu-item" index="4">消息</el-menu-item>
         </el-menu>
@@ -31,7 +30,7 @@
       <el-container>
         <el-aside width="200px">
           <el-menu
-            router
+            @select="selectItem"
             @open="handleOpen"
             @close="handleClose"
             background-color="#545c64"
@@ -62,15 +61,11 @@
               
             </el-submenu> -->
             <el-submenu v-for="(menuItem, index) in leftMenu" :index="menuItem.menuIndex">
-              <template slot="title">
+                <template slot="title" :tabindex="menuItem.menuIndex">
                 <i class="el-icon-menu"></i>
                 <span slot="title">{{ menuItem.menuName }}</span>
-              </template>
-                <el-menu-item v-for="(item, i) in menuItem.menuItems" data-key="item.itemName" index="{{ item.itemIndex }}">{{ item.itemName }}</el-menu-item>
-                <!--<el-menu-item index="2-2">选项2-2</el-menu-item>-->
-                <!--<el-menu-item index="/user/list">用户列表</el-menu-item>-->
-                <!--<el-menu-item index="3-1">选项3-1</el-menu-item>-->
-                <!--<el-menu-item index="3-2">选项3-2</el-menu-item>-->
+                </template>
+                <el-menu-item v-for="(item, i) in menuItem.menuItems" :data-key="item.itemName" :index="item.itemIndex">{{ item.itemName }}</el-menu-item>
             </el-submenu>
             <!-- <el-menu-item index="3" disabled>
               <i class="el-icon-document"></i>
@@ -84,17 +79,19 @@
         </el-aside>
         <el-container>
           <el-main>
-            <el-tabs v-model="editableTabsValue2" type="border-card" closable @tab-remove="removeTab">
-              <el-tab-pane
-                v-for="item in editableTabs2"
-                :key="item.name"
-                :label="item.title"
-                :name="item.name"
-              >
-                <router-view></router-view>
-              </el-tab-pane>
+            <el-tabs v-model="editableTabsValue2" type="border-card" closable @tab-remove="removeTab" @tab-click="tabClick">
+                <el-tab-pane
+                        v-for="item in editableTabs2"
+                        :key="item.name"
+                        :label="item.title"
+                        :name="item.name">
+                    <keep-alive>
+                        <div class="tab-content" :is="item.name"></div>
+                    </keep-alive>
+                </el-tab-pane>
+
             </el-tabs>
-            
+
           </el-main>
           <el-footer>Copyright © 2018, Content By 河南砼鑫软件科技有限公司 保留所有权利.</el-footer>
         </el-container>
@@ -104,9 +101,12 @@
 </template>
 
 <script>
-    import Vue from 'vue'
+import Home from "./components/Home";
+import UserList from './components/user/List'
+import EnterpriseList from './components/enterprise/List'
 export default {
-  data() {
+    components: {Home, UserList, EnterpriseList},
+    data() {
     return {
       leftMenu: [
         {
@@ -130,16 +130,19 @@ export default {
             ]
         }
       ],
-      activeIndex: '1',
-      activeIndex2: '1',
-      editableTabsValue2: '2',
-      editableTabs2: [{
-        title: 'Tab 1',
-        name: '1',
-      }, {
-        title: 'Tab 2',
-        name: '2',
-      }],
+      activeIndex: 'Home',
+      activeIndex2: 'Home',
+      editableTabsValue2: 'Home',
+      editableTabs2: [
+          {
+            title: '首页',
+            name: 'Home',
+          },
+      // {
+      //   title: 'Tab 2',
+      //   name: '2',
+      // }
+      ],
       tabIndex: 2
     };
   },
@@ -152,16 +155,32 @@ export default {
         duration: 5000
       })
     },
+    tabClick(e){
+        console.log(e)
+    },
     addTab(targetName) {
         console.log('add')
+
+
         let newTabName = ++this.$data.tabIndex + '';
-        var tabs = this.$data.editableTabs2;
+        const tabs = this.$data.editableTabs2;
+        // 判断是否存在
+
+        for (let i = 0; i<tabs.length; i++){
+            console.log(tabs[i])
+            console.log(this.$menu)
+            if (tabs[i]['title'] === targetName) {
+                this.$set(this.$data, 'editableTabsValue2', this.$menu[targetName].componentName);
+                this.$router.push(this.$menu[targetName].path)
+                return;
+            }
+        }
         tabs.push({
           title: targetName,
-          name: newTabName
+          name: this.$menu[targetName].componentName
         });
         this.$set(this.$data, 'editableTabs2', tabs);
-        this.$set(this.$data, 'editableTabsValue2', newTabName);
+        this.$set(this.$data, 'editableTabsValue2', this.$menu[targetName].componentName);
     },
     removeTab(targetName) {
       let tabs = this.$data.editableTabs2;
@@ -189,9 +208,23 @@ export default {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
     },
-    // selectItem(key, keyPath){
-    //     // Vue.router.push({path: key})
-    // }
+    selectItem(key, keyPath){
+        // Vue.router.push({path: key})
+
+        //判断是否存在
+
+
+
+        if (key === '/user/list'){
+            this.addTab('用户列表');
+            // router.push('/user/list')
+        }
+        else if (key === '/enterprise/list'){
+            this.addTab('企业列表');
+        }
+        this.$router.push(key)
+
+    }
   }
 }
 </script>
@@ -211,7 +244,7 @@ export default {
   background-color: rgb(84, 92, 100);
 }
 .el-menu{
-  border-right: solid 0px;
+  border-right: solid 0;
 }
 html, body{
   width: 100%;

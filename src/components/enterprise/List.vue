@@ -77,6 +77,7 @@
 
 <script>
 export default {
+    name: "EnterpriseList",
     methods: {
       onSubmit() {
         console.log('submit!');

@@ -77,6 +77,7 @@
 
 <script>
 export default {
+    name: "UserList",
     methods: {
       onSubmit() {
         console.log('submit!');
@@ -165,4 +166,7 @@ export default {
     margin-bottom: 0;
     margin-top: 1rem;
 }
+    .box-card{
+        height: 100%;
+    }
 </style>
