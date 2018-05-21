@@ -8,6 +8,7 @@ import VueRouter from "vue-router";
 import menu from './config/menu.js'
 
 import UserList from './components/user/List'
+import UserInfo from './components/user/info'
 import EnterpriseList from './components/enterprise/List'
 import Home from './components/Home'
 
@@ -26,6 +27,7 @@ const vum = new Vue({
     router,
     components:{
         'UserList': UserList,
+        'UserInfo': UserInfo,
         'EnterpriseList': EnterpriseList,
         'Home': Home,
     },

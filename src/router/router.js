@@ -4,7 +4,9 @@
 
 
 import UserList from '../components/user/List'
+import UserInfo from '../components/user/Info'
 import EnterpriseList from '../components/enterprise/List'
+import UserEdit from '../components/user/Edit'
 
 const routes = [
     {
@@ -15,6 +17,13 @@ const routes = [
                 path : 'list',
                 component: UserList
             },
+            {
+                path: 'info/:userId',
+                component: UserInfo
+            },{
+                path: 'edit/:userId',
+                component: UserEdit
+            }
         ]
     },
     {

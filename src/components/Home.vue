@@ -1,6 +1,6 @@
 <template>
-    <div class="title">
-        这是首页
+    <div class="home">
+
     </div>
 </template>
 
@@ -11,7 +11,9 @@
 </script>
 
 <style scoped>
-.title{
-    text-align: center;
+.home{
+    height: 100%;
+    width: 100%;
+    background-image: url("../assets/home.jpg");
 }
 </style>
